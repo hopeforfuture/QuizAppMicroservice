@@ -53,7 +53,6 @@ public class QuestionController {
 
         Question question = questionService.createQuestion(request);
 
-        //return ResponseEntity.ok(question);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
