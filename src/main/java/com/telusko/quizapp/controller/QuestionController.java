@@ -1,6 +1,7 @@
 package com.telusko.quizapp.controller;
 
 import com.telusko.quizapp.dto.QuestionRequest;
+import com.telusko.quizapp.dto.QuestionResponse;
 import com.telusko.quizapp.dto.QuestionStatusRequest;
 import com.telusko.quizapp.model.Question;
 import com.telusko.quizapp.service.QuestionService;
@@ -25,19 +26,25 @@ public class QuestionController {
     }*/
 
     @GetMapping
-    public ResponseEntity<List<Question>> getQuestions(
+    public ResponseEntity<QuestionResponse> getQuestions(
             @RequestParam(required = false) String active,
             @RequestParam(required = false) String category) {
 
         List<Question> questions =
                 questionService.getQuestions(active, category);
 
-        return ResponseEntity.ok(questions);
+        QuestionResponse response =
+                new QuestionResponse(questions.size(), questions);
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("category/{category}")
-    public List<Question> getQuestionsByCategory(@PathVariable("category") String category) {
-        return questionService.getQuestionsByCategory(category);
+    public ResponseEntity<QuestionResponse> getQuestionsByCategory(@PathVariable("category") String category) {
+        List<Question> questions = questionService.getQuestionsByCategory(category);
+        QuestionResponse response =
+                new QuestionResponse(questions.size(), questions);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping()
