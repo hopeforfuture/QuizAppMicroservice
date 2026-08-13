@@ -1,11 +1,14 @@
 package com.telusko.quizapp.controller;
 
+import com.telusko.quizapp.dto.QuestionRequest;
+import com.telusko.quizapp.dto.QuestionStatusRequest;
 import com.telusko.quizapp.model.Question;
 import com.telusko.quizapp.service.QuestionService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -16,8 +19,60 @@ public class QuestionController {
     @Autowired
     private QuestionService questionService;
 
-    @GetMapping()
+    /*@GetMapping()
     public List<Question> getAllQuestions() {
         return questionService.getAllQuestions();
+    }*/
+
+    @GetMapping
+    public ResponseEntity<List<Question>> getQuestions(
+            @RequestParam(required = false) String active,
+            @RequestParam(required = false) String category) {
+
+        List<Question> questions =
+                questionService.getQuestions(active, category);
+
+        return ResponseEntity.ok(questions);
     }
+
+    @GetMapping("category/{category}")
+    public List<Question> getQuestionsByCategory(@PathVariable("category") String category) {
+        return questionService.getQuestionsByCategory(category);
+    }
+
+    @PostMapping()
+    public ResponseEntity<Question> createQuestion(
+            @Valid @RequestBody QuestionRequest request) {
+
+        Question question = questionService.createQuestion(request);
+
+        //return ResponseEntity.ok(question);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @PutMapping("{id}")
+    public ResponseEntity<Question> updateQuestion(
+            @PathVariable Integer id,
+            @Valid @RequestBody QuestionRequest request) {
+
+        Question question = questionService.updateQuestion(id, request);
+
+        return ResponseEntity.ok(question);
+    }
+
+    // ACTIVATE / DEACTIVATE
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<Question> updateQuestionStatus(
+            @PathVariable Integer id,
+            @Valid @RequestBody QuestionStatusRequest request) {
+
+        Question question =
+                questionService.updateQuestionStatus(
+                        id,
+                        request.getActive()
+                );
+
+        return ResponseEntity.ok(question);
+    }
+
 }

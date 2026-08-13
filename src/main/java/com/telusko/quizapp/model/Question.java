@@ -22,4 +22,5 @@ public class Question {
     private String rightAnswer;
     private String difficultylevel;
     private String category;
+    private Boolean active;
 }
