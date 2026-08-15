@@ -65,7 +65,7 @@ public class QuestionService {
 
         // category + active=true/false
         Boolean activeStatus = parseActiveStatus(active);
-
+        
         return questionDao.findByCategoryAndActive(
                 category,
                 activeStatus
